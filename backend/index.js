@@ -15,10 +15,20 @@ app.get('/ping', (req, res) => {
 });
 
 app.use(bodyParser.json());
-app.use(cors({
-    origin: 'http://localhost:3000',
+const allowedOrigins = ['http://localhost:3000', 'https://mern-authentication-smoky.vercel.app'];
+
+// CORS configuration
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     optionsSuccessStatus: 200,
-}));
+};
+app.use(cors(corsOptions));
 app.use('/auth', AuthRouter);
 app.use('/products', ProductRouter);
 
