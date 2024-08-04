@@ -24,10 +24,10 @@ function Login() {
         e.preventDefault();
         const { email, password } = loginInfo;
         if (!email || !password) {
-            return handleError('email and password are required')
+            return handleError('Email and password are required');
         }
         try {
-            const url = `https://mern-authentication-backend-pi.vercel.app/auth/login`;
+            const url = "https://mern-authentication-backend-pi.vercel.app/auth/login";
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
@@ -35,6 +35,11 @@ function Login() {
                 },
                 body: JSON.stringify(loginInfo)
             });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
             const result = await response.json();
             console.log(result);
             const { success, message, jwtToken, name, error } = result;
@@ -43,19 +48,19 @@ function Login() {
                 localStorage.setItem('token', jwtToken);
                 localStorage.setItem('loggedInUser', name);
                 setTimeout(() => {
-                    navigate('/home')
-                }, 1000)
+                    navigate('/home');
+                }, 1000);
             } else if (error) {
-                const details = error?.details[0].message;
+                const details = error?.details[0]?.message || 'Unknown error';
                 handleError(details);
             } else if (!success) {
                 handleError(message);
             }
-            console.log(result);
         } catch (err) {
-            handleError(err);
+            handleError(`Failed to login: ${err.message}`);
         }
     }
+    
 
     return (
         <div className='container'>
